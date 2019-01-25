@@ -22,6 +22,10 @@ public class Statement implements StatementInterface {
         this.transactions = findTransactionsWithinDate(acc.getTransactions(), startDate, endDate);
     }
 
+    /**
+     * This method searches through all transactions to find those between start and end dates
+     * @return valid list of transactions
+     */
     private List<Transaction> findTransactionsWithinDate(@NotNull List<Transaction> transactions, Date startDate, Date endDate) {
         List<Transaction> validTransactions = new ArrayList<>();
         for (Transaction t : transactions) {
