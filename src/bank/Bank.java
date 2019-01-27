@@ -213,7 +213,7 @@ public class Bank extends UnicastRemoteObject implements BankInterface {
         Bank bank = new Bank();
 
         Registry registry = LocateRegistry.getRegistry(port);
-        registry.bind("Bank", bank);
+        registry.rebind("Bank", bank);
 
         System.out.println("Bank Server Started on Port: " + port);
     }
