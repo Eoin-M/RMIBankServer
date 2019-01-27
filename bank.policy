@@ -48,5 +48,5 @@ grant {
 
 		permission java.io.FilePermission "./*", "read,write";
 
-		permission java.net.SocketPermission "127.0.0.1:*", "connect,resolve";
+		permission java.net.SocketPermission "127.0.0.1", "connect,accept,listen,resolve";
 };
