@@ -1,4 +1,4 @@
-package bank;
+import bank.*;
 
 import java.io.*;
 import java.rmi.RemoteException;
