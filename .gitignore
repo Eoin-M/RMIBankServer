@@ -1,2 +1,5 @@
 .idea/
 out/
+
+accounts.ser
+logins.ser
