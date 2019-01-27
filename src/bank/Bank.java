@@ -29,19 +29,6 @@ public class Bank extends UnicastRemoteObject implements BankInterface {
         sessions = new HashMap<>();
     }
 
-
-    /**
-     * Basic method to manually initialise a few accounts when file doesn't exists
-     */
-    private void createAccounts() {
-        accounts = new HashMap<>();
-        accounts.put(101, new Account(101, "Eoin"));
-        accounts.put(102, new Account(102, "Matt"));
-        accounts.put(103, new Account(103, "Adam"));
-        accounts.put(104, new Account(104, "Edgars"));
-        writeAccounts();
-    }
-
     /**
      * This method checks if a sessionID exists and is not expired
      * If a sessionID exists but is expired, it is removed
@@ -124,7 +111,9 @@ public class Bank extends UnicastRemoteObject implements BankInterface {
             ois = new ObjectInputStream(fis);
             accounts = (Map<Integer, Account>) ois.readObject();
             System.out.println("Successfully Loaded " + accounts.size() + " Account(s)");
-        } catch (Exception e) {
+        } catch (FileNotFoundException e) {
+            createAccounts();
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         } finally {
             if(ois != null){
@@ -164,7 +153,9 @@ public class Bank extends UnicastRemoteObject implements BankInterface {
             ois = new ObjectInputStream(fis);
             logins = (Map<String, String>) ois.readObject();
             System.out.println("Successfully Loaded " + logins.size() + " Login(s)");
-        } catch (Exception e) {
+        } catch (FileNotFoundException e) {
+            createLogins();
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         } finally {
             if(ois != null){
@@ -195,6 +186,28 @@ public class Bank extends UnicastRemoteObject implements BankInterface {
                 }
             }
         }
+    }
+
+    /**
+     * Basic method to manually initialise a few accounts when file doesn't exists
+     */
+    private void createAccounts() {
+        accounts = new HashMap<>();
+        accounts.put(101, new Account(101, "Eoin"));
+        accounts.put(102, new Account(102, "Matt"));
+        accounts.put(103, new Account(103, "Adam"));
+        accounts.put(104, new Account(104, "Edgars"));
+        writeAccounts();
+    }
+
+    /**
+     * Basic method to manually initialise a few logins when file doesn't exists
+     */
+    private void createLogins() {
+        logins = new HashMap<>();
+        logins.put("admin", "admin");
+        logins.put("user", "pass");
+        writeLogins();
     }
 
     public static void main(String[] args) throws Exception {
