@@ -46,20 +46,21 @@ public class Bank extends UnicastRemoteObject implements BankInterface {
      * This method checks if a sessionID exists and is not expired
      * If a sessionID exists but is expired, it is removed
      * @param sessionID - Any number of type long
-     * @return true - sessionID exists and is not expired, else return false
+     * throws InvalidSession error with msg depending on scenario
      */
-    private boolean checkSession(long sessionID) {
+    private void checkSession(long sessionID) throws InvalidSession {
         if (sessions.containsKey(sessionID)) {
             long currTime = new Date().getTime();
 
-            // Check if session is older than set time in minutes
+            // Check if session is less than set time in minutes
             if ((currTime - sessions.get(sessionID).getTime()) / (1000 * 60) < maxSessionTime) {
-                return true;
+                return;
             } else {
                 sessions.remove(sessionID);
+                throw new InvalidSession("Session Expired. (>" + maxSessionTime + ")");
             }
         }
-        return false;
+        throw new InvalidSession("No Session Exists.");
     }
 
     /**
@@ -79,8 +80,7 @@ public class Bank extends UnicastRemoteObject implements BankInterface {
 
     @Override
     public void deposit(int accountnum, int amount, long sessionID) throws RemoteException, InvalidAccount, InvalidSession {
-        if (!checkSession(sessionID))
-            throw new InvalidSession();
+        checkSession(sessionID);
         if (!accounts.containsKey(accountnum))
             throw new InvalidAccount("No Account with Number: " + accountnum + " Exists!");
 
@@ -90,8 +90,7 @@ public class Bank extends UnicastRemoteObject implements BankInterface {
 
     @Override
     public void withdraw(int accountnum, int amount, long sessionID) throws RemoteException, InvalidAccount, InvalidSession {
-        if (!checkSession(sessionID))
-            throw new InvalidSession();
+        checkSession(sessionID);
         if (!accounts.containsKey(accountnum))
             throw new InvalidAccount("No Account with Number: " + accountnum + " Exists!");
 
@@ -101,8 +100,7 @@ public class Bank extends UnicastRemoteObject implements BankInterface {
 
     @Override
     public int inquiry(int accountnum, long sessionID) throws RemoteException, InvalidAccount, InvalidSession {
-        if (!checkSession(sessionID))
-            throw new InvalidSession();
+        checkSession(sessionID);
         if (!accounts.containsKey(accountnum))
             throw new InvalidAccount("No Account with Number: " + accountnum + " Exists!");
 
@@ -111,8 +109,7 @@ public class Bank extends UnicastRemoteObject implements BankInterface {
 
     @Override
     public Statement getStatement(int accountnum, Date from, Date to, long sessionID) throws RemoteException, InvalidAccount, InvalidSession {
-        if (!checkSession(sessionID))
-            throw new InvalidSession();
+        checkSession(sessionID);
         if (!accounts.containsKey(accountnum))
             throw new InvalidAccount("No Account with Number: " + accountnum + " Exists!");
 
