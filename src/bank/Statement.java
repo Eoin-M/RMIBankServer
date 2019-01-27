@@ -1,7 +1,5 @@
 package bank;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -26,7 +24,7 @@ public class Statement implements StatementInterface {
      * This method searches through all transactions to find those between start and end dates
      * @return valid list of transactions
      */
-    private List<Transaction> findTransactionsWithinDate(@NotNull List<Transaction> transactions, Date startDate, Date endDate) {
+    private List<Transaction> findTransactionsWithinDate(List<Transaction> transactions, Date startDate, Date endDate) {
         List<Transaction> validTransactions = new ArrayList<>();
         for (Transaction t : transactions) {
             Date tDate = t.getDate();
