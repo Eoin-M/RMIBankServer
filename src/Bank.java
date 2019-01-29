@@ -122,9 +122,8 @@ public class Bank extends UnicastRemoteObject implements BankInterface {
                         it.remove();
                     }
                 }
-                System.out.println("Size: " + sessions.keySet().size());
             }
-        }, 0, 1000 * 60);
+        }, 0, 1000 * 10);
     }
 
     private void loadAccounts() {
@@ -234,11 +233,14 @@ public class Bank extends UnicastRemoteObject implements BankInterface {
     }
 
     public static void main(String[] args) throws Exception {
+        // Add necessary permissions for file and network access
         System.setProperty("java.security.policy", "bank.policy");
         System.setSecurityManager(new SecurityManager());
 
+        // Default RMI port
         int port = 1099;
 
+        // Try read 1st param as integer port, else use default
         try {
             port = Integer.valueOf(args[0]);
         }
