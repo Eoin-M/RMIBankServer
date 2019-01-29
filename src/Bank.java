@@ -5,9 +5,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Bank extends UnicastRemoteObject implements BankInterface {
@@ -27,28 +25,7 @@ public class Bank extends UnicastRemoteObject implements BankInterface {
         System.out.println();
 
         sessions = new HashMap<>();
-    }
-
-    /**
-     * This method checks if a sessionID exists and is not expired
-     * If a sessionID exists but is expired, it is removed
-     * @param sessionID - Any number of type long
-     * throws InvalidSession error with msg depending on scenario
-     */
-    private void checkSession(long sessionID) throws InvalidSession {
-        if (sessions.containsKey(sessionID)) {
-            long currTime = new Date().getTime();
-
-            // Check if session is less than set time in minutes
-            if ((currTime - sessions.get(sessionID).getTime()) / (1000 * 60) < maxSessionTime) {
-                sessions.put(sessionID, new Date()); // Reset expiration timer if session is valid
-                return;
-            } else {
-                sessions.remove(sessionID);
-                throw new InvalidSession("Session Expired. (>" + maxSessionTime + ")");
-            }
-        }
-        throw new InvalidSession("No Session Exists.");
+        startSessionValidator();
     }
 
     /**
@@ -103,6 +80,51 @@ public class Bank extends UnicastRemoteObject implements BankInterface {
 
         Account acc = accounts.get(accountnum);
         return new Statement(acc, from, to);
+    }
+
+    /**
+     * This method checks if a sessionID exists and is not expired
+     * If a sessionID exists but is expired, it is removed
+     * @param sessionID - Any number of type long
+     * throws InvalidSession error with msg depending on scenario
+     */
+    private void checkSession(long sessionID) throws InvalidSession {
+        if (sessions.containsKey(sessionID)) {
+            long currTime = new Date().getTime();
+
+            // Check if session is less than set time in minutes
+            if ((currTime - sessions.get(sessionID).getTime()) / (1000 * 60) < maxSessionTime) {
+                sessions.put(sessionID, new Date()); // Reset expiration timer if session is valid
+                return;
+            } else {
+                sessions.remove(sessionID);
+                throw new InvalidSession("Session Expired. (>" + maxSessionTime + ")");
+            }
+        }
+        throw new InvalidSession("No Session Exists.");
+    }
+
+    /**
+     * This method periodically (every 10 seconds) checks for any expired sessionID
+     * and removes it
+     */
+    private void startSessionValidator() {
+        Timer t = new Timer();
+        t.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                Iterator<Map.Entry<Long, Date>> it = sessions.entrySet().iterator();
+                while(it.hasNext()) {
+                    long currTime = new Date().getTime();
+                    Map.Entry<Long, Date> pair = it.next();
+                    Date date = pair.getValue();
+                    if ((currTime - date.getTime()) / (1000d * 60d) > maxSessionTime) {
+                        it.remove();
+                    }
+                }
+                System.out.println("Size: " + sessions.keySet().size());
+            }
+        }, 0, 1000 * 60);
     }
 
     private void loadAccounts() {
