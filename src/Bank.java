@@ -1,6 +1,7 @@
 import bank.*;
 
 import java.io.*;
+import java.rmi.ConnectException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -251,7 +252,15 @@ public class Bank extends UnicastRemoteObject implements BankInterface {
         Bank bank = new Bank();
 
         Registry registry = LocateRegistry.getRegistry(port);
-        registry.rebind("Bank", bank);
+
+        // Try connect to running registry, else create new registry
+        try {
+            // rebind to avoid already exists error, will bind if doesn't already exist
+            registry.rebind("Bank", bank);
+        } catch (ConnectException e) {
+            registry = LocateRegistry.createRegistry(port);
+            registry.rebind("Bank", bank);
+        }
 
         System.out.println("Bank Server Started on Port: " + port);
     }
