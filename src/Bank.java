@@ -41,6 +41,7 @@ public class Bank extends UnicastRemoteObject implements BankInterface {
 
             // Check if session is less than set time in minutes
             if ((currTime - sessions.get(sessionID).getTime()) / (1000 * 60) < maxSessionTime) {
+                sessions.put(sessionID, new Date()); // Reset expiration timer if session is valid
                 return;
             } else {
                 sessions.remove(sessionID);
