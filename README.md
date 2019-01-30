@@ -4,6 +4,10 @@
 
 ### To start server:
 
+ Either run Bank.java directly from an IDE without running external RMIRegistry
+
+ Or:
+
   1. Compile and Build Java files
   2. Run command 'start rmiregistry' in directory with compiled Bank.class
      (Ensure Java/bin is in PATH)
