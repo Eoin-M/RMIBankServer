@@ -100,7 +100,6 @@ public class ATM
 					break;
 				case "inquiry":
 					try {
-						System.out.println(sessionID);
 						int balance = bank.inquiry(accountNumber, sessionID);
 						System.out.println("The current balance of account " + accountNumber + " is €" + balance);
 					} catch(InvalidAccount | InvalidSession e) {
