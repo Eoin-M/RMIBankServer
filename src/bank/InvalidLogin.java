@@ -1,5 +1,4 @@
 package bank;
 
-public class InvalidLogin extends Exception
-{
+public class InvalidLogin extends Exception {
 }

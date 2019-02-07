@@ -120,6 +120,6 @@ class BankTest {
         Assertions.assertNotNull(s);
         Assertions.assertEquals(2, s.getTransactions().size());
 
-        System.out.println(s.getTransactions().toString());
+        System.out.println(s);
     }
 }
